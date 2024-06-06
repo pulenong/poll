@@ -1,0 +1,79 @@
+<?php
+
+use User\Service\UrlService;
+
+$title = $this->translate('Poll Vote');
+$this->headMeta()->appendName('keywords', 'Vote, Select, Poll');
+$this->headMeta()->appendName('description', 'Select the best poll option');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('poll', ['action' => 'vote', 'id' => $this->poll->getPollId(), 'slug' => $this->poll->getSlug()]));
+$form->prepare();
+
+?>
+
+<div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-6 shadow-sm">
+        <h1 class="h2 text-center mb-3">
+            <?= $this->translate('Poll #'.$this->poll->getPollId().'-'.$this->poll->getTitle()); ?>
+        </h1>
+
+        <?= $this->form()->openTag($form); ?>
+
+        <p class="mb-3">
+            <?= $this->escapeHtml($this->poll->getQuestion()); ?>
+        </p>
+
+        <div class="mb-3">
+            <?php
+            $options = $this->optionsTbl->findById((int) $this->poll->getPollId());
+            foreach ($options as $option): ?>
+
+            <div class="form-check">
+                <?= $this->formRadio($form->get('optionId')->setValueOptions([$option->getOptionId() => $option->getOption()])); ?>
+            </div>
+
+            <?php endforeach; ?>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a href="<?= $this->url('poll', ['action' => 'view', 'id' => $this->poll->getPollId(), 'slug' => $this->poll->getSlug()]); ?>" class="btn btn-outline-info btn-sm">
+                        <?= $this->translate('View Poll Results'); ?>
+                    </a>
+                </li>
+
+                <?php if ($this->identity()): ?>
+                
+                    <?php if ($this->voteTbl->hasVoted((int) $this->poll->getPollId(), (int) $this->accountHelper()->getUserId())): ?>
+                    <li class="list-inline-item float-end">
+                        <p class="form-text text-warning fw-bold text-md-center mt-2">
+                            <?= $this->translate('You have already voted'); ?>
+                        </p>
+                    </li>
+                    <?php else: ?>
+                    <li class="list-inline-item float-end">
+                        <?= $this->formHidden($form->get('userId')->setValue($this->accountHelper()->getUserId())); ?>
+                        <?= $this->formSubmit($form->get('saveVote')); ?>
+                    </li>        
+                    <?php endif; ?>
+                <?php else: ?>
+                <li class="list-inline-item float-end">
+                    <p class="form-text text-muted mt-2">
+                        <?= sprintf($this->translate('You must be %slogged in%s to vote.'),
+                         '<a href="'.$this->url('login', ['returnUrl' => UrlService::encode($this->currentPage)]).'">', '</a>'); 
+                        ?>
+                    </p>
+                </li>    
+                <?php endif; ?>
+            </ul>
+        </div>
+
+        <?= $this->form()->closeTag(); ?>
+
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<?php
+
+$title = $this->translate('Lost Password');
+$this->headMeta()->appendName('keywords', 'Lost, Forgot, Password');
+$this->headMeta()->appendName('description', 'I forgot my password');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('forgot'));
+$form->prepare();
+
+?>
+
+<div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-6 shadow-sm">
+
+        <h1 class="h2 text-center mb-3">
+            <?= $this->translate('I Forgot My Password'); ?>
+        </h1>
+
+        <?= $this->form()->openTag($form); ?>
+
+        <p class="mb-3">
+            <?= $this->translate('Enter your email and we\'ll send you a password reset link'); ?>
+        </p>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('email')); ?>
+            <?= $this->formEmail($form->get('email')); ?>
+            <div class="invalid-feedback fw-bold">
+                <?= $this->formElementErrors($form->get('email')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('turing')); ?>
+            <?= $this->formCaptcha($form->get('turing')); ?>
+            <div class="invalid-feedback fw-bold">
+                <?= $this->formElementErrors($form->get('turing')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formSubmit($form->get('forgotPassword')); ?>
+        </div>
+
+        <?= $this->form()->closeTag(); ?>
+    </div>
+</div>

@@ -1,0 +1,107 @@
+<?php
+
+$title = $this->translate('View Poll Results');
+$this->headMeta()->appendName('keywords', 'View, Poll, Results');
+$this->headMeta()->appendName('description', 'View poll results');
+$this->headTitle($this->escapeHtml($title));
+
+?>
+
+<section class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8 mb-4 shadow-sm">
+            <h1 class="display-5 text-center fw-medium">
+                <?= $this->translate($this->poll->getTitle()); ?>
+            </h1>
+
+            <p class="mb-4">
+                <?= $this->escapeHtml($this->poll->getQuestion()); ?>
+            </p>
+
+            <?php
+            $options = $this->optionsTbl->findById((int) $this->poll->getPollId());
+
+            foreach ($options as $index => $option):
+                $percent = $this->poll->getTotalVotes() != 0 ? sprintf("%.2f", 100.0 * $option->getVoteTally() / $this->poll->getTotalVotes()) : 0;
+            ?>
+
+            <small class="text-muted fw-light mb-2">
+                <?= $this->escapeHtml($option->getOption()) . ' ('.$percent.'%) - '. $option->getVoteTally() . ' of ' . $this->poll->getTotalVotes() . ' votes.'; ?>
+            </small>
+
+            <div class="mb-2 progress" style="height: 25px;" role="progressbar" aria-label="<?= $option->getOption(); ?>" aria-valuenow="<?= $percent; ?>" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar progress-bar-striped barChart-<?= (($index % 5)+1); ?>" style="width: <?= $percent == 0 ? ++$percent : $percent; ?>%" title="<?= $percent; ?>"></div>
+            </div>
+
+            <?php endforeach; ?>
+
+            <hr>
+
+            <div class="mb-3">
+                <ul class="list-inline text-md-center text-muted">
+                    <li class="list-inline-item">
+                        <?= $this->translate('Posted by '); ?>
+                        <a href="<?= $this->url('profile', ['username' => mb_strtolower($this->poll->getUsername())]); ?>">
+                            <?= ucfirst($this->poll->getUsername()); ?>
+                        </a>
+                    </li> &diam;
+                    
+                    <li class="list-inline-item">
+                        <time class="elapsedTime" datetime="<?= $this->poll->getCreated(); ?>" title="<?= $this->poll->getCreated(); ?>"></time>
+                    </li> &diam;
+
+                    <li class="list-inline-item">
+                        <?= $this->translate('Status: ' . $this->poll->getStatus()); ?>
+                    </li> &diam;
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function timeElapsed(datetimeString) {
+    const now = new Date();
+    const then = new Date(datetimeString);
+    const delta = now - then;
+
+    // calculate elapsed time in seconds
+    const seconds = delta / 1000;
+
+    // define units and their threshold
+    const units = [
+        ["year", 31536000],
+        ["month", 2592000],
+        ["week", 604800],
+        ["day", 86400],
+        ["hour", 3600],
+        ["minute", 60],
+    ];
+
+    // find the most suitable units
+    for (const [unit, threshold] of units) {
+        if (seconds >= threshold) {
+            const elapsedTime = Math.floor(seconds/threshold);
+            return `${elapsedTime} ${unit}${elapsedTime > 1 ? 's': ''} ago`;
+        }
+    }
+
+    // if less than a minute return "just now"
+    return "just now";
+}
+
+
+function updateTime() {
+    const timeElement = document.querySelector('.elapsedTime');
+    const datetimeString = timeElement.getAttribute('datetime');
+    const relativeTime = timeElapsed(datetimeString);
+    timeElement.textContent = relativeTime;
+}
+
+// call the function on page load
+// updateTime();
+
+setInterval(updateTime, 10000); // update every 10 seconds
+
+</script>

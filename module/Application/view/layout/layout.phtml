@@ -1,0 +1,88 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+?>
+<?= $this->doctype() ?>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?= $this->headTitle('Pollster')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?= $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?= $this->headLink([
+                                'rel' => 'shortcut icon',
+                                'type' => 'image/vnd.microsoft.icon',
+                                'href' => $this->basePath() . '/bootstrap/img/favicon.ico'
+                            ])
+            ->prependStylesheet($this->basePath('bootstrap/css/app.css'))
+            ->prependStylesheet($this->basePath('bootstrap/css/bootstrap.min.css'))
+        ?>
+
+        <!-- Scripts -->
+        <?= $this->headScript() ?>
+    </head>
+
+    <body>
+
+       <div class="container">
+           <header class="d-flex flex-wrap align-items-center justiy-content-center justify-content-md-between py-3 mb-4 border-bottom">
+               <div class="col-md-3 mb-2 mb-md-0">
+                   <a href="<?= $this->url('home'); ?>" class="d-inline-flex link-body-emphasis text-decoration-none">
+                   </a> 
+               </div>
+               
+               <ul class="nav col-12 col-md-auto mb-2 justify-content-center mn-md-0">
+                   <li>
+                       <a href="<?= $this->url('home'); ?>" class="nav-link px-2 link-secondary">Home</a>
+                   </li>
+               </ul>
+
+               <?php if (!$this->identity()): ?>
+               <div class="col-md-3 text-end">
+                   <a href="<?= $this->url('login'); ?>" class="btn btn-outline-primary me-2">Sign in</a>
+                   <a href="<?= $this->url('signup'); ?>" class="btn btn-outline-primary">Sign up</a>     
+               </div>
+               <?php else: ?>
+               <div class="dropdown text-end">
+                   <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                       <img src="<?= $this->basePath('profile/'.$this->accountHelper()->getPicture()); ?>" alt="photo" width="32" height="32" class="rounded-circle"> 
+                   </a>
+
+                   <ul class="dropdown-menu text-small">
+                        <?php if ($this->identity()->role_id == '1'): ?>
+                        <li>
+                            <a class="dropdown-item" href="<?= $this->url('admin_user', ['action' => 'index']); ?>">Admin</a>
+                        </li>
+                        <?php endif; ?>
+                        <li>
+                            <a class="dropdown-item" href="<?= $this->url('settings', ['action' => 'email']); ?>">Settings</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<?= $this->url('profile', ['username' => mb_strtolower($this->accountHelper()->getUsername())]); ?>">Profile</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a  class="dropdown-item" href="<?= $this->url('logout'); ?>">Sign out</a>
+                        </li>
+                   </ul> 
+               </div> 
+               <?php endif; ?> 
+           </header> 
+       </div>
+        
+        <div class="container">
+            <?= $this->partial('partial/flash.phtml', $this->flashMessenger()); ?>
+            <?= $this->content ?>
+        </div>
+
+        <?= $this->inlineScript()
+              ->prependFile($this->basePath('bootstrap/js/app.js'))
+              ->prependFile($this->basePath('bootstrap/js/bootstrap.bundle.min.js')) ?>
+    </body>
+</html>

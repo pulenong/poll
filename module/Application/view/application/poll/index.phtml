@@ -1,0 +1,55 @@
+<?php
+
+$title = $this->translate('My Polls');
+$this->headMeta()->appendName('keywords', 'Polls, Created');
+$this->headMeta()->appendName('description', 'List of polls I have created');
+$this->headTitle($this->escapeHtml($title));
+
+?>
+
+<h1 class="h2 text-center mb-3"><?= $this->translate('Polls I Have Created'); ?></h1>
+
+<?php if (count($this->polls) > 0): ?>
+
+<table class="table table-striped table-hover table-responsive table-bordered border-primary">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>End Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <?php foreach ($this->polls as $poll): ?>
+        <tr>
+            <td>
+                <a href="<?= $this->url('poll', ['action' => 'view', 'id' => $poll->getPollId(), 'slug' => $poll->getSlug()]); ?>">
+                    <?= $poll->getPollId(); ?>
+                </a>
+            </td>
+            <td>
+            <a href="<?= $this->url('poll', ['action' => 'view', 'id' => $poll->getPollId(), 'slug' => $poll->getSlug()]); ?>">
+                    <?= $this->escapeHtml($poll->getTitle()); ?>
+                </a>
+            </td>
+            <td><?= $this->escapeHtml($poll->getCategory()); ?></td>
+            <td><?= $this->escapeHtml($poll->getStatus()); ?></td>
+            <td><?= $this->dateFormat(new DateTime($poll->getCreated()), IntlDateFormatter::MEDIUM, IntlDateFormatter::MEDIUM, "en-us"); ?></td>
+            <td><?= $this->dateFormat(new DateTime($poll->getTimeout()), IntlDateFormatter::MEDIUM, IntlDateFormatter::MEDIUM, "en-us"); ?></td>
+            <td>
+                <a href="<?= $this->url('poll', ['action' => 'delete', 'id' => $poll->getPollId(), 'slug' => $poll->getSlug()]); ?>"><?= $this->translate('Delete Poll'); ?></a>
+            </td>
+        </tr>
+        <?php endforeach; ?>    
+    </tbody>
+</table>
+<?php else: ?>
+<p class="mt-3 fw-medium">
+    <?= $this->translate('You have not posted any polls yet.'); ?>
+</p>
+<?php endif;

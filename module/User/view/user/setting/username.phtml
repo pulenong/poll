@@ -1,0 +1,101 @@
+<?php
+
+$title = $this->translate('Change Username');
+$this->headMeta()->appendName('keywords', 'Edit, Update, Change, Username');
+$this->headMeta()->appendName('description', 'Change my username');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('settings', ['action' => 'username']));
+$form->prepare();
+
+?>
+
+<section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+    <div class="row pb-2 pb-lg-0">
+
+        <aside class="col-xl-3 col-lg-4 pb-3 mb-4 mb-lg-0">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-2">
+                        <?= $this->accountHelper()->getUsername(); ?>
+                    </h5>
+
+                    <p class="card-text text-muted mb-lg-0">
+                        <?= $this->accountHelper()->getEmail(); ?>
+                    </p>
+
+                    <a href="#account" class="btn btn-primary w-100 d-lg-none" data-bs-toggle="collapse">
+                        <?= $this->translate('Account Menu'); ?>
+                    </a>
+                </div>
+
+                <div class="collapse d-lg-block" id="account">
+                    <div class="list-group list-group-flush border-top">
+                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span><?= $this->translate('My Profile'); ?></span>
+                        </a>
+
+                        <a href="<?= $this->url('settings', ['action' => 'avatar']); ?>" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span><?= $this->translate('Update Avatar'); ?></span>
+                        </a>
+
+                        <a href="<?= $this->url('settings', ['action' => 'email']); ?>" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span><?= $this->translate('Update Email Address'); ?></span>
+                        </a>
+
+                        <a href="<?= $this->url('settings', ['action' => 'password']); ?>" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span><?= $this->translate('Update Password'); ?></span>
+                        </a>
+
+                        <a href="<?= $this->url('settings', ['action' => 'username']); ?>" class="list-group-item list-group-item-action d-flex align-items-center active">
+                            <span><?= $this->translate('Update Username'); ?></span>
+                        </a>
+
+                        <a href="<?= $this->url('settings', ['action' => 'delete']); ?>" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <span><?= $this->translate('Delete Account'); ?></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="col-lg-8 ms-auto">
+            <div class="d-flex align-items-center justify-content-center mb-4 pb-1 pb-sm-3">
+
+                <h1 class="h2 mb-0 text-center">
+                    <?= $this->translate('Change My Username'); ?>
+                </h1>
+            </div>
+
+            
+            <?= $this->form()->openTag($form); ?>
+
+            <div class="mb-3">
+                <?= $this->formLabel($form->get('currentUsername')); ?>
+                <?= $this->formText($form->get('currentUsername')->setValue($this->accountHelper()->getUsername())); ?>
+                <div class="text-danger fw-bold">
+                    <?= $this->formElementErrors($form->get('currentUsername')); ?>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <?= $this->formLabel($form->get('newUsername')); ?>
+                <?= $this->formText($form->get('newUsername')); ?>
+                <div class="text-danger fw-bold">
+                    <?= $this->formElementErrors($form->get('newUsername')); ?>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <?= $this->formHidden($form->get('csrf')); ?>
+                <div class="text-danger fw-bold">
+                    <?= $this->formElementErrors($form->get('csrf')); ?>
+                </div>
+                <?= $this->formSubmit($form->get('changeUsername')); ?>
+            </div>
+
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,136 @@
+<?php
+
+$title = $this->translate('New Poll');
+$this->headMeta()->appendName('keywords', 'Start, Create, New, Poll');
+$this->headMeta()->appendName('description', 'Create a new poll');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('poll', ['action' => 'create']));
+$form->prepare();
+
+?>
+
+<div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-6 shadow-sm">
+
+        <h1 class="text-center h2">
+            <?= $this->translate('Create A New Poll'); ?>
+        </h1>
+
+        <?= $this->form()->openTag($form); ?>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('title')); ?>
+            <?= $this->formText($form->get('title')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('title')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('categoryId')); ?>
+            <?= $this->formSelect($form->get('categoryId')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('categoryId')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('timeout')); ?>
+            <?= $this->formSelect($form->get('timeout')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('timeout')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('question')); ?>
+            <?= $this->formTextarea($form->get('question')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('question')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formLabel($form->get('options[]')); ?>
+            <?= $this->formText($form->get('options[]')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('options[]')); ?>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formText($form->get('options[]')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('options[]')); ?>
+            </div>
+        </div>
+
+        <div id="optionWrapper"></div>
+
+        <div class="mb-3">
+            <?= $this->formButton($form->get('addOption')); ?>
+        </div>
+
+        <div class="mb-3">
+            <?= $this->formHidden($form->get('userId')->setValue($this->accountHelper()->getUserId())); ?>
+            <?= $this->formHidden($form->get('csrf')); ?>
+            <div class="text-danger fw-bold">
+                <?= $this->formElementErrors($form->get('csrf')); ?>
+            </div>
+            <?= $this->formSubmit($form->get('createPoll')); ?>
+        </div>
+
+        <?= $this->form()->closeTag(); ?>
+    </div>
+</div>
+
+<script>
+    const optionWrapper = document.getElementById('optionWrapper');
+    const addOptionButton = document.getElementById('addOption');
+
+    let optionsCount = 2; // initial count based on existing options
+    let allowedMaximumOptionsCount = 4; // allowed maximum options
+
+    function addOption() {
+        if (optionsCount < allowedMaximumOptionsCount) {
+            const newOption = document.createElement('div');
+            newOption.classList.add('input-group', 'mb-3');
+
+            const newOptionInput = document.createElement('input');
+            newOptionInput.type = 'text';
+            newOptionInput.name = 'options[]';
+            newOptionInput.required = true;
+            newOptionInput.maxLength = 100;
+            newOptionInput.placeholder = 'Enter a possible option...';
+            newOptionInput.title = 'Provide a possible option';
+            newOptionInput.classList.add('form-control');
+
+            const deleteButton = document.createElement('div');
+            deleteButton.classList.add('input-group-text', 'deleteBtn');
+            deleteButton.textContent = 'Delete Field';
+
+            // Add a click event to the delete button
+            deleteButton.addEventListener('click', () => {
+                optionWrapper.removeChild(newOption);
+                optionsCount--;
+
+                if (optionsCount < allowedMaximumOptionsCount) {
+                    addOptionButton.style.display = 'block';
+                }
+            });
+
+            newOption.appendChild(newOptionInput);
+            newOption.appendChild(deleteButton);
+            optionWrapper.appendChild(newOption);
+
+            optionsCount++;
+            if (optionsCount === allowedMaximumOptionsCount) {
+                addOptionButton.style.display = 'none';
+            }
+        }
+    }
+
+    addOptionButton.addEventListener('click', addOption);
+</script>

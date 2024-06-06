@@ -1,0 +1,66 @@
+<?php
+
+$title = $this->translate('Admin');
+$this->headMeta()->appendName('keywords', 'Admin, Manage, Users');
+$this->headMeta()->appendName('description', 'Manage User Accounts');
+$this->headTitle($this->escapeHtml($title));
+
+?>
+
+<div class="row">
+    
+    <h1 class="h2 text-secondary mb-3">Active Accounts</h1>
+
+    <div class="table-responsive scrollbar">
+        <table class="table table-hover table-bordered table-striped overflow-hidden">
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Birthdate</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Joined</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                <?php foreach ($this->paginator as $user): ?>
+
+                    <tr class="align-middle">
+                        <td class="text-nowrap">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar avatar-xl">
+                                    <img class="img-fluid rounded-circle" src="<?= $this->basePath('profile/'.$user->getPicture()); ?>" alt="profile picture" height="32" width="32" />
+                                </div>
+
+                                <div class="ms-2">
+                                    <a href="<?= $this->url('profile', ['username' => mb_strtolower($user->getUsername())]); ?>"><?= $user->getUsername(); ?></a>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="text-nowrap"><?= $user->getEmail(); ?></td>
+
+                        <td class="text-nowrap"><?= $user->getBirthdate(); ?></td>
+
+                        <td class="text-nowrap"><?= ucfirst($user->getRole()); ?></td>
+
+                        <td class="text-nowrap">
+                            <?= $this->dateFormat(new DateTime($user->getCreated()), IntlDateFormatter::LONG, IntlDateFormatter::NONE, "en-us"); ?>
+                        </td> 
+                    </tr>
+
+                <?php endforeach; ?>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<?= $this->paginationControl(
+    $this->paginator,
+    'sliding',
+    'partial/paginator.phtml',
+    ['route' => 'admin_user']
+);
