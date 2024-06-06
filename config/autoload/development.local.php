@@ -21,7 +21,7 @@ return [
         'display_exceptions' => true,
     ],
     'db' => [
-        'username' => 'root', // Enter your MySQL Username
-        'password' => '', // Enter your MySQL Password
+        'username' => 'root', // Provide your MySQL Username
+        'password' => '', // Provide your MySQL Password
     ],
 ];
